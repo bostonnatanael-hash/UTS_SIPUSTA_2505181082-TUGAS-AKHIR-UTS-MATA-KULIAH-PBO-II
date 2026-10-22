@@ -1,5 +1,6 @@
 
 import eksepsi.PustakaException;
+import layanan.EksporKatalog;
 import layanan.KatalogPerpustakaan;
 import layanan.UrutLayakLaluJudul;
 import model.BerkasDigital;
@@ -7,7 +8,10 @@ import model.BukuCetak;
 import model.Koleksi;
 import model.Majalah;
 
+import java.io.IOException;
+
 public class Main {
+
     public static void main(String[] args) {
         BukuCetak bk1 = new BukuCetak(
                 "BK-001", "Java How to Program", 2022,
@@ -67,6 +71,16 @@ public class Main {
         System.out.println();
         System.out.println("=== STATUS SETELAH PEMINJAMAN ===");
         katalog.cetakStatus();
+
+        System.out.println();
+        System.out.println("=== SOAL 6: EKSPOR KATALOG ===");
+
+        try {
+            new EksporKatalog().ekspor(katalog, "katalog.txt");
+            System.out.println("Berhasil menulis katalog.txt");
+        } catch (IOException e) {
+            System.out.println("Gagal menulis berkas: " + e.getMessage());
+        }
     }
 
     private static void cobaPinjam(
