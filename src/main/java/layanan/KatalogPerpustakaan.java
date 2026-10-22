@@ -1,5 +1,9 @@
+
 package layanan;
 
+import eksepsi.KoleksiSedangDipinjamException;
+import eksepsi.KoleksiTidakLayakException;
+import eksepsi.PustakaException;
 import model.Koleksi;
 
 import java.util.ArrayList;
@@ -27,10 +31,6 @@ public class KatalogPerpustakaan {
         }
     }
 
-    public void urut(Comparator<? super Koleksi> pembanding) {
-        daftar.sort(pembanding);
-    }
-
     private String status(Koleksi k) {
         if (k.isSedangDipinjam()) {
             return "SEDANG DIPINJAM";
@@ -39,5 +39,34 @@ public class KatalogPerpustakaan {
         return k.layakDipinjam()
                 ? "LAYAK DIPINJAM"
                 : "TIDAK LAYAK DIPINJAM";
+    }
+
+    public void urut(Comparator<Koleksi> aturan) {
+        daftar.sort(aturan);
+    }
+
+    public void pinjam(String kode) throws PustakaException {
+        for (Koleksi k : daftar) {
+            if (k.getKodeKoleksi().equals(kode)) {
+                if (k.isSedangDipinjam()) {
+                    throw new KoleksiSedangDipinjamException(
+                            k.getJudul()
+                    );
+                }
+
+                if (!k.layakDipinjam()) {
+                    throw new KoleksiTidakLayakException(
+                            k.getJudul()
+                    );
+                }
+
+                k.setSedangDipinjam(true);
+                return;
+            }
+        }
+
+        throw new PustakaException(
+                "Koleksi dengan kode " + kode + " tidak ditemukan."
+        );
     }
 }

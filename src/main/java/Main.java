@@ -1,3 +1,5 @@
+
+import eksepsi.PustakaException;
 import layanan.KatalogPerpustakaan;
 import layanan.UrutLayakLaluJudul;
 import model.BerkasDigital;
@@ -50,8 +52,32 @@ public class Main {
 
         System.out.println();
         System.out.println("=== SOAL 4: URUT LAYAK LALU JUDUL ===");
-
         katalog.urut(new UrutLayakLaluJudul());
         katalog.cetakStatus();
+
+        System.out.println();
+        System.out.println("=== SOAL 5: PEMINJAMAN DAN EKSEPSI ===");
+        cobaPinjam(katalog, "BK-001");
+        cobaPinjam(katalog, "BK-001");
+        cobaPinjam(katalog, "BK-002");
+        cobaPinjam(katalog, "MJ-001");
+        cobaPinjam(katalog, "BD-001");
+        cobaPinjam(katalog, "XX-999");
+
+        System.out.println();
+        System.out.println("=== STATUS SETELAH PEMINJAMAN ===");
+        katalog.cetakStatus();
+    }
+
+    private static void cobaPinjam(
+            KatalogPerpustakaan katalog, String kode) {
+        try {
+            katalog.pinjam(kode);
+            System.out.println(
+                    "[BERHASIL] " + kode + " berhasil dipinjam."
+            );
+        } catch (PustakaException e) {
+            System.out.println("[GAGAL] " + e.getMessage());
+        }
     }
 }
