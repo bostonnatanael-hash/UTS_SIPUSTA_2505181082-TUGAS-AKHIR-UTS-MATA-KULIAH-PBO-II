@@ -1,8 +1,10 @@
 package layanan;
 
 import model.Koleksi;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class KatalogPerpustakaan {
@@ -23,6 +25,10 @@ public class KatalogPerpustakaan {
             System.out.println(nomor++ + ". " + k.deskripsi());
             System.out.println("   Status: " + status(k));
         }
+    }
+
+    public void urut(Comparator<? super Koleksi> pembanding) {
+        daftar.sort(pembanding);
     }
 
     private String status(Koleksi k) {
