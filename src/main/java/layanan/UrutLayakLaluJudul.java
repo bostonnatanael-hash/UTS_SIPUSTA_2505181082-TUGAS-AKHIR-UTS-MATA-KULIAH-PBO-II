@@ -4,20 +4,19 @@ import model.Koleksi;
 
 import java.util.Comparator;
 
-/**
- * Urutan berlapis: koleksi layak pinjam tampil lebih dulu,
- * lalu diurutkan berdasarkan judul (A-Z, tidak peka huruf besar/kecil).
- */
 public class UrutLayakLaluJudul implements Comparator<Koleksi> {
-    private final Comparator<Koleksi> aturan =
-            Comparator.comparing((Koleksi k) -> !k.layakDipinjam())
-                    .thenComparing(
-                            Koleksi::getJudul,
-                            String.CASE_INSENSITIVE_ORDER
-                    );
 
     @Override
-    public int compare(Koleksi a, Koleksi b) {
-        return aturan.compare(a, b);
+    public int compare(Koleksi pertama, Koleksi kedua) {
+
+        boolean layakPertama = pertama.layakDipinjam();
+        boolean layakKedua = kedua.layakDipinjam();
+
+        if (layakPertama != layakKedua) {
+            return layakPertama ? -1 : 1;
+        }
+
+        return pertama.getJudul()
+                .compareToIgnoreCase(kedua.getJudul());
     }
 }

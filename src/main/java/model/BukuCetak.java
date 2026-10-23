@@ -1,17 +1,19 @@
 package model;
 
 public class BukuCetak extends Koleksi implements Terarsip {
+
     private final int jumlahHalaman;
-    private final String nomorRak;
+    private final String rak;
     private final int lantai;
     private final boolean sedangDiperbaiki;
 
     public BukuCetak(String kodeKoleksi, String judul, int tahunTerbit,
-                     int jumlahHalaman, String nomorRak, int lantai,
+                     int jumlahHalaman, String rak, int lantai,
                      boolean sedangDiperbaiki) {
+
         super(kodeKoleksi, judul, tahunTerbit);
         this.jumlahHalaman = jumlahHalaman;
-        this.nomorRak = nomorRak;
+        this.rak = rak;
         this.lantai = lantai;
         this.sedangDiperbaiki = sedangDiperbaiki;
     }
@@ -26,15 +28,14 @@ public class BukuCetak extends Koleksi implements Terarsip {
 
     @Override
     public String nomorRak() {
-        return nomorRak;
+        return rak;
     }
 
     @Override
     public String lokasiLantai() {
-        return "Lantai " + lantai;
+        return "lantai " + lantai;
     }
 
-    /** Layak apabila tidak sedang diperbaiki. */
     @Override
     public boolean layakDipinjam() {
         return !sedangDiperbaiki;
@@ -42,7 +43,13 @@ public class BukuCetak extends Koleksi implements Terarsip {
 
     @Override
     public String deskripsi() {
-        return super.deskripsi() + " | " + jumlahHalaman + " halaman | rak " + nomorRak
-                + " (lantai " + lantai + ") | " + (sedangDiperbaiki ? "sedang diperbaiki" : "tidak diperbaiki");
+        String kondisi = sedangDiperbaiki
+                ? "sedang diperbaiki"
+                : "tidak diperbaiki";
+
+        return super.deskripsi()
+                + " | " + jumlahHalaman + " halaman"
+                + " | " + ringkasanArsip()
+                + " | " + kondisi;
     }
 }

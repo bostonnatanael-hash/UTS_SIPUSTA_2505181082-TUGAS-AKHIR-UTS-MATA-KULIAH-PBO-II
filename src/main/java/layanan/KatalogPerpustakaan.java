@@ -1,4 +1,3 @@
-
 package layanan;
 
 import eksepsi.KoleksiSedangDipinjamException;
@@ -7,66 +6,75 @@ import eksepsi.PustakaException;
 import model.Koleksi;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class KatalogPerpustakaan {
-    private final List<Koleksi> daftar = new ArrayList<>();
 
-    public void tambah(Koleksi koleksi) {
-        daftar.add(koleksi);
+    private final List<Koleksi> koleksi = new ArrayList<>();
+
+    public void tambah(Koleksi item) {
+        koleksi.add(item);
     }
 
     public List<Koleksi> getDaftar() {
-        return Collections.unmodifiableList(daftar);
+        return List.copyOf(koleksi);
     }
 
     public void cetakStatus() {
-        int nomor = 1;
+        for (int i = 0; i < koleksi.size(); i++) {
+            Koleksi item = koleksi.get(i);
 
-        for (Koleksi k : daftar) {
-            System.out.println(nomor++ + ". " + k.deskripsi());
-            System.out.println("   Status: " + status(k));
+            System.out.println((i + 1) + ". " + item.deskripsi());
+            System.out.println("   Status: " + tentukanStatus(item));
         }
     }
 
-    private String status(Koleksi k) {
-        if (k.isSedangDipinjam()) {
+    private String tentukanStatus(Koleksi item) {
+        if (item.isSedangDipinjam()) {
             return "SEDANG DIPINJAM";
         }
 
-        return k.layakDipinjam()
-                ? "LAYAK DIPINJAM"
-                : "TIDAK LAYAK DIPINJAM";
+        if (item.layakDipinjam()) {
+            return "LAYAK DIPINJAM";
+        }
+
+        return "TIDAK LAYAK DIPINJAM";
     }
 
-    public void urut(Comparator<Koleksi> aturan) {
-        daftar.sort(aturan);
+    public void urut(Comparator<Koleksi> pembanding) {
+        koleksi.sort(pembanding);
     }
 
     public void pinjam(String kode) throws PustakaException {
-        for (Koleksi k : daftar) {
-            if (k.getKodeKoleksi().equals(kode)) {
-                if (k.isSedangDipinjam()) {
-                    throw new KoleksiSedangDipinjamException(
-                            k.getJudul()
-                    );
-                }
 
-                if (!k.layakDipinjam()) {
-                    throw new KoleksiTidakLayakException(
-                            k.getJudul()
-                    );
-                }
+        Koleksi ditemukan = null;
 
-                k.setSedangDipinjam(true);
-                return;
+        for (Koleksi item : koleksi) {
+            if (item.getKodeKoleksi().equals(kode)) {
+                ditemukan = item;
+                break;
             }
         }
 
-        throw new PustakaException(
-                "Koleksi dengan kode " + kode + " tidak ditemukan."
-        );
+        if (ditemukan == null) {
+            throw new PustakaException(
+                    "Koleksi dengan kode " + kode + " tidak ditemukan."
+            );
+        }
+
+        if (ditemukan.isSedangDipinjam()) {
+            throw new KoleksiSedangDipinjamException(
+                    ditemukan.getJudul()
+            );
+        }
+
+        if (!ditemukan.layakDipinjam()) {
+            throw new KoleksiTidakLayakException(
+                    ditemukan.getJudul()
+            );
+        }
+
+        ditemukan.setSedangDipinjam(true);
     }
 }

@@ -1,25 +1,27 @@
 package model;
 
 public class Majalah extends Koleksi implements Terarsip {
-    private final int edisi;
+
+    private final int nomorEdisi;
     private final String bulanTerbit;
-    private final String nomorRak;
+    private final String rak;
     private final int lantai;
     private final boolean edisiTerbaru;
 
     public Majalah(String kodeKoleksi, String judul, int tahunTerbit,
-                   int edisi, String bulanTerbit, String nomorRak, int lantai,
-                   boolean edisiTerbaru) {
+                   int nomorEdisi, String bulanTerbit, String rak,
+                   int lantai, boolean edisiTerbaru) {
+
         super(kodeKoleksi, judul, tahunTerbit);
-        this.edisi = edisi;
+        this.nomorEdisi = nomorEdisi;
         this.bulanTerbit = bulanTerbit;
-        this.nomorRak = nomorRak;
+        this.rak = rak;
         this.lantai = lantai;
         this.edisiTerbaru = edisiTerbaru;
     }
 
-    public int getEdisi() {
-        return edisi;
+    public int getNomorEdisi() {
+        return nomorEdisi;
     }
 
     public String getBulanTerbit() {
@@ -32,15 +34,14 @@ public class Majalah extends Koleksi implements Terarsip {
 
     @Override
     public String nomorRak() {
-        return nomorRak;
+        return rak;
     }
 
     @Override
     public String lokasiLantai() {
-        return "Lantai " + lantai;
+        return "lantai " + lantai;
     }
 
-    /** Layak apabila bukan edisi terbaru. */
     @Override
     public boolean layakDipinjam() {
         return !edisiTerbaru;
@@ -48,7 +49,14 @@ public class Majalah extends Koleksi implements Terarsip {
 
     @Override
     public String deskripsi() {
-        return super.deskripsi() + " | edisi " + edisi + " | " + bulanTerbit + " | rak " + nomorRak
-                + " (lantai " + lantai + ") | " + (edisiTerbaru ? "edisi terbaru" : "bukan terbaru");
+        String keterangan = edisiTerbaru
+                ? "edisi terbaru"
+                : "bukan terbaru";
+
+        return super.deskripsi()
+                + " | edisi " + nomorEdisi
+                + " | " + bulanTerbit
+                + " | " + ringkasanArsip()
+                + " | " + keterangan;
     }
 }

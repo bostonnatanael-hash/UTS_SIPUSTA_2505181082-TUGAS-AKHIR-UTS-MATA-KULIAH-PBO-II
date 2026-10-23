@@ -10,32 +10,56 @@ import java.util.List;
 
 public class EksporKatalog {
 
-    /** Menulis seluruh koleksi ke berkas teks dengan kolom sejajar rapi. */
-    public void ekspor(KatalogPerpustakaan katalog, String namaBerkas) throws IOException {
-        List<Koleksi> daftar = katalog.getDaftar();
+    public void ekspor(KatalogPerpustakaan katalog, String namaBerkas)
+            throws IOException {
 
-        // Lebar kolom judul menyesuaikan judul terpanjang agar kolom tetap sejajar
-        int lebarJudul = "JUDUL".length();
-        for (Koleksi k : daftar) {
-            lebarJudul = Math.max(lebarJudul, k.getJudul().length());
+        List<Koleksi> data = katalog.getDaftar();
+
+        int panjangJudul = 5;
+
+        for (Koleksi item : data) {
+            if (item.getJudul().length() > panjangJudul) {
+                panjangJudul = item.getJudul().length();
+            }
         }
-        String format = "%-8s %-14s %-" + lebarJudul + "s %-6s %-13s %s%n";
 
-        // try-with-resources: aliran otomatis ditutup
-        try (BufferedWriter penulis = Files.newBufferedWriter(Path.of(namaBerkas))) {
-            String header = String.format(format, "KODE", "JENIS", "JUDUL", "TAHUN", "KELAYAKAN", "DIPINJAM");
-            penulis.write(header);
-            penulis.write("-".repeat(header.length() - System.lineSeparator().length()));
-            penulis.newLine();
+        String pola = "%-8s %-14s %-"
+                + panjangJudul
+                + "s %-6s %-13s %s%n";
 
-            for (Koleksi k : daftar) {
-                penulis.write(String.format(format,
-                        k.getKodeKoleksi(),
-                        k.getClass().getSimpleName(),
-                        k.getJudul(),
-                        String.valueOf(k.getTahunTerbit()),
-                        k.layakDipinjam() ? "Layak" : "Tidak layak",
-                        k.isSedangDipinjam() ? "Ya" : "Tidak"));
+        try (BufferedWriter writer =
+                     Files.newBufferedWriter(Path.of(namaBerkas))) {
+
+            String header = String.format(
+                    pola,
+                    "KODE",
+                    "JENIS",
+                    "JUDUL",
+                    "TAHUN",
+                    "KELAYAKAN",
+                    "DIPINJAM"
+            );
+
+            writer.write(header);
+            writer.write("-".repeat(
+                    header.length() - System.lineSeparator().length()
+            ));
+            writer.newLine();
+
+            for (Koleksi item : data) {
+                writer.write(String.format(
+                        pola,
+                        item.getKodeKoleksi(),
+                        item.getClass().getSimpleName(),
+                        item.getJudul(),
+                        item.getTahunTerbit(),
+                        item.layakDipinjam()
+                                ? "Layak"
+                                : "Tidak layak",
+                        item.isSedangDipinjam()
+                                ? "Ya"
+                                : "Tidak"
+                ));
             }
         }
     }
